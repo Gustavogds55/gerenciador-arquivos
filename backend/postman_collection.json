@@ -1,0 +1,49 @@
+{
+  "info": {
+    "name": "Gerenciador Arquivos S3",
+    "description": "Collection para testar API de upload de arquivos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3001",
+          "path": [""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Upload Arquivo",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:3001/upload",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3001",
+          "path": ["upload"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
