@@ -25,20 +25,31 @@
         </div>
 
         <!-- Formulário de Login -->
-        <form @submit.prevent="handleLogin" class="space-y-6">
+        <form @submit.prevent="handleLogin" class="space-y-6" novalidate>
           <div class="space-y-4">
             <div class="relative">
               <input
                 v-model="loginForm.email"
                 type="email"
-                required
-                class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+                maxlength="50"
+                :class="[
+                  'w-full px-4 py-3 bg-white/10 border rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm',
+                  errors.email ? 'border-red-400' : 'border-white/20'
+                ]"
                 placeholder="Digite seu email"
+                @blur="validateEmail"
+                @input="clearEmailError"
               />
-              <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+              <div class="absolute top-3 right-3 flex items-center justify-center">
                 <svg class="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
                 </svg>
+              </div>
+              <div v-if="errors.email" class="mt-2 text-red-300 text-sm flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ errors.email }}
               </div>
             </div>
 
@@ -46,14 +57,26 @@
               <input
                 v-model="loginForm.password"
                 type="password"
-                required
-                class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+                minlength="3"
+                maxlength="6"
+                :class="[
+                  'w-full px-4 py-3 bg-white/10 border rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm',
+                  errors.password ? 'border-red-400' : 'border-white/20'
+                ]"
                 placeholder="Digite sua senha"
+                @blur="validatePassword"
+                @input="clearPasswordError"
               />
-              <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+              <div class="absolute top-3 right-3 flex items-center justify-center">
                 <svg class="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                 </svg>
+              </div>
+              <div v-if="errors.password" class="mt-2 text-red-300 text-sm flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ errors.password }}
               </div>
             </div>
           </div>
@@ -96,7 +119,7 @@
 
         <!-- Formulário de Registro -->
         <div v-if="showRegister" class="mt-6 space-y-6">
-          <form @submit.prevent="handleRegister" class="space-y-4">
+          <form @submit.prevent="handleRegister" class="space-y-4" novalidate>
             <div class="relative">
               <input
                 v-model="registerForm.name"
@@ -208,6 +231,10 @@ const loading = ref(false)
 const showRegister = ref(false)
 const message = ref('')
 const messageType = ref('')
+const errors = ref({
+  email: '',
+  password: ''
+})
 
 // Formulários
 const loginForm = ref({
@@ -230,7 +257,58 @@ const showMessage = (msg, type = 'success') => {
   }, 5000)
 }
 
+const validateEmail = () => {
+  if (!loginForm.value.email.trim()) {
+    errors.value.email = 'Campo obrigatório'
+    return false
+  }
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(loginForm.value.email)) {
+    errors.value.email = 'Email inválido'
+    return false
+  }
+  
+  errors.value.email = ''
+  return true
+}
+
+const validatePassword = () => {
+  if (!loginForm.value.password.trim()) {
+    errors.value.password = 'Campo obrigatório'
+    return false
+  }
+  
+  if (loginForm.value.password.length < 3 || loginForm.value.password.length > 6) {
+    errors.value.password = 'Senha deve ter entre 3 e 6 caracteres'
+    return false
+  }
+  
+  errors.value.password = ''
+  return true
+}
+
+const clearEmailError = () => {
+  if (errors.value.email) {
+    errors.value.email = ''
+  }
+}
+
+const clearPasswordError = () => {
+  if (errors.value.password) {
+    errors.value.password = ''
+  }
+}
+
 const handleLogin = async () => {
+  // Validar campos obrigatórios
+  const emailValid = validateEmail()
+  const passwordValid = validatePassword()
+  
+  if (!emailValid || !passwordValid) {
+    return
+  }
+  
   loading.value = true
   
   try {
