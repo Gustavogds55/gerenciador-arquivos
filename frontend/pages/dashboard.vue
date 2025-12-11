@@ -8,7 +8,7 @@
 
     <!-- Header -->
     <header class="relative z-10 backdrop-blur-lg bg-white/5 border-b border-white/10">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-6">
           <div class="flex items-center space-x-4">
             <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
@@ -18,7 +18,7 @@
             </div>
             <div>
               <h1 class="text-2xl font-bold text-white">CloudVault</h1>
-              <p class="text-purple-200 text-sm">Painel de Controle</p>
+              <p class="text-purple-200 text-sm">{{ uploadedFiles.length }} arquivos</p>
             </div>
           </div>
           <div class="flex items-center space-x-4">
@@ -38,67 +38,15 @@
     </header>
 
     <!-- Conteúdo Principal -->
-    <main class="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8 relative z-10">
+    <main class="max-w-6xl mx-auto py-8 sm:px-6 lg:px-8 relative z-10">
       <div class="px-4 py-6 sm:px-0 space-y-8">
-        
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div class="backdrop-blur-lg bg-white/10 rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
-            <div class="flex items-center">
-              <div class="p-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
-                </svg>
-              </div>
-              <div class="ml-4">
-                <p class="text-purple-200 text-sm">Total de Arquivos</p>
-                <p class="text-2xl font-bold text-white">{{ uploadedFiles.length }}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="backdrop-blur-lg bg-white/10 rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
-            <div class="flex items-center">
-              <div class="p-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-              </div>
-              <div class="ml-4">
-                <p class="text-purple-200 text-sm">Status</p>
-                <p class="text-2xl font-bold text-white">Online</p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="backdrop-blur-lg bg-white/10 rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
-            <div class="flex items-center">
-              <div class="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-              </div>
-              <div class="ml-4">
-                <p class="text-purple-200 text-sm">Velocidade</p>
-                <p class="text-2xl font-bold text-white">Rápido</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <!-- Upload de Arquivos -->
         <div class="backdrop-blur-lg bg-white/10 rounded-3xl border border-white/20 overflow-hidden shadow-2xl hover:bg-white/20 transition-all duration-300">
           <div class="px-8 py-8">
-            <div class="flex items-center mb-6">
-              <div class="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl mr-4">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
-                </svg>
-              </div>
-              <h3 class="text-2xl font-bold text-white">
-                Upload de Arquivos
-              </h3>
-            </div>
+            <h3 class="text-2xl font-bold text-white mb-6">
+              📁 Upload de Arquivos
+            </h3>
             
             <!-- Área de Upload -->
             <div 
@@ -210,16 +158,9 @@
         <!-- Lista de Arquivos Enviados -->
         <div class="backdrop-blur-lg bg-white/10 rounded-3xl border border-white/20 overflow-hidden shadow-2xl hover:bg-white/20 transition-all duration-300">
           <div class="px-8 py-8">
-            <div class="flex items-center mb-6">
-              <div class="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl mr-4">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                </svg>
-              </div>
-              <h3 class="text-2xl font-bold text-white">
-                Meus Arquivos
-              </h3>
-            </div>
+            <h3 class="text-2xl font-bold text-white mb-6">
+              📂 Meus Arquivos
+            </h3>
             
             <div v-if="uploadedFiles.length === 0" class="text-center py-12">
               <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
