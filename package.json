@@ -8,10 +8,17 @@
   "scripts": {
     "dev:frontend": "cd frontend && npm run dev",
     "dev:backend": "cd backend && npm run dev",
-    "install:all": "cd frontend && npm install && cd ../backend && npm install"
+    "install:all": "cd frontend && npm install && cd ../backend && npm install",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0"
+  },
   "description": ""
 }

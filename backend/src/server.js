@@ -183,7 +183,11 @@ app.post('/upload', authenticateToken, upload.single('file'), async (req, res) =
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📚 Documentação Swagger: http://localhost:${PORT}/api-docs`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando na porta ${PORT}`);
+    console.log(`📚 Documentação Swagger: http://localhost:${PORT}/api-docs`);
+  });
+}
+
+module.exports = app;

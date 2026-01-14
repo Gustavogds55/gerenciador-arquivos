@@ -7,13 +7,21 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "test:e2e": "cypress run"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "nuxt": "^3.8.0"
+    "@vitejs/plugin-vue": "^6.0.3",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^20.1.0",
+    "jsdom": "^27.4.0",
+    "nuxt": "^3.8.0",
+    "vitest": "^4.0.17"
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.8.4",
