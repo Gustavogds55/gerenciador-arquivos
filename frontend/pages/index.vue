@@ -344,16 +344,17 @@ const handleRegister = async () => {
       body: registerForm.value
     })
 
-    // Salvar token
-    const token = useCookie('auth-token')
-    token.value = response.token
-
-    showMessage('Conta criada com sucesso!')
+    showMessage(response.message || 'Conta criada com sucesso!')
     
-    // Redirecionar para dashboard
-    setTimeout(() => {
-      navigateTo('/dashboard')
-    }, 1000)
+    // Voltar para o formulário de login
+    showRegister.value = false
+    
+    // Limpar formulário de registro
+    registerForm.value = {
+      name: '',
+      email: '',
+      password: ''
+    }
     
   } catch (error) {
     showMessage(error.data?.error || 'Erro ao criar conta', 'error')

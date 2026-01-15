@@ -14,6 +14,14 @@ class AuthController {
         });
       }
 
+      // Validar formato do email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ 
+          error: 'Email inválido' 
+        });
+      }
+
       if (password.length < 6) {
         return res.status(400).json({ 
           error: 'Senha deve ter pelo menos 6 caracteres' 
@@ -23,13 +31,12 @@ class AuthController {
       // Criar usuário
       const user = await userService.createUser({ name, email, password });
 
-      // Gerar token
-      const token = generateToken(user);
-
       res.status(201).json({
-        message: 'Usuário criado com sucesso',
-        user,
-        token
+        message: 'Conta criada com sucesso! Faça login para continuar.',
+        user: {
+          name: user.name,
+          email: user.email
+        }
       });
     } catch (error) {
       console.error('Erro no registro:', error);
