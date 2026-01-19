@@ -4,6 +4,7 @@ const AWS = require('aws-sdk');
 const cors = require('cors');
 const { swaggerUi, specs } = require('./swagger');
 const authController = require('./auth/authController');
+const companiesController = require('./companies/companiesController');
 const { authenticateToken } = require('./auth/authMiddleware');
 require('dotenv').config();
 
@@ -112,6 +113,10 @@ app.post('/auth/login', authController.login);
  *         description: Token inválido
  */
 app.get('/auth/profile', authenticateToken, authController.profile);
+
+// Rotas de empresas
+app.get('/companies', authenticateToken, companiesController.getCompanies);
+app.post('/companies', authenticateToken, companiesController.createCompany);
 
 /**
  * @swagger
