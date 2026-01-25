@@ -1,5 +1,23 @@
 # 📋 Regras de Negócio - CloudVault (ATUALIZADO)
 
+## 🏢 **SISTEMA MULTI-TENANT**
+
+### **Estrutura de Empresas**
+- ✅ **Modelo:** Sistema multi-tenant por empresa
+- ✅ **Isolamento:** Cada empresa tem dados completamente separados
+- ✅ **Seleção:** Modal obrigatório para escolher empresa após login
+- ✅ **Persistência:** Empresa selecionada salva em cookie
+- ✅ **Troca:** Botão "Trocar Empresa" disponível no dashboard
+
+### **CRUD de Empresas**
+- ✅ **Criação:** Nome da empresa + CNPJ (14 dígitos)
+- ✅ **Validação:** CNPJ único no sistema
+- ✅ **Busca:** Modal com busca por nome ou CNPJ
+- ✅ **Listagem:** Empresas do usuário logado
+- ✅ **Armazenamento:** Arquivo JSON local (backend/data/companies.json)
+
+---
+
 ## 🔐 **AUTENTICAÇÃO E USUÁRIOS**
 
 ### **Registro de Usuário**
@@ -16,59 +34,64 @@
 - ✅ **Autenticação:** Verificação de senha com bcrypt
 - ✅ **Token JWT:** Gerado com validade de 7 dias
 - ✅ **Sessão:** Mantida via cookie seguro
-
-### **Validações de Email**
-- ✅ **Formato:** Regex `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
-- ✅ **Frontend:** Validação em tempo real no login
-- ✅ **Backend:** Validação no registro e login
-- ✅ **Mensagens:** "Email inválido" para formato incorreto
-
-### **Segurança**
-- ✅ **Criptografia:** Senhas hasheadas com bcrypt (salt 10)
-- ✅ **JWT:** Tokens com expiração de 7 dias
-- ✅ **Middleware:** Rotas protegidas requerem autenticação
-- ✅ **Validação:** Dupla validação (frontend + backend)
-- ✅ **Proteção de Rotas:** Acesso direto ao `/dashboard` redireciona para `/`
+- ✅ **Pós-login:** Modal de seleção de empresa obrigatório
 
 ---
 
 ## 📁 **GERENCIAMENTO DE ARQUIVOS**
 
+### **Estrutura de Armazenamento S3**
+- ✅ **Organização:** `uploads/company-{companyId}/pasta/arquivo.pdf`
+- ✅ **Isolamento:** Cada empresa tem pasta separada no S3
+- ✅ **Pastas:** Sistema de pastas hierárquico
+- ✅ **Arquivo .keep:** Mantém pastas vazias (oculto da interface)
+
+### **Sistema de Pastas**
+- ✅ **Criação:** Botão "Nova Pasta" com nome personalizado
+- ✅ **Navegação:** Clique na pasta para entrar
+- ✅ **Breadcrumb:** Mostra caminho atual (Raiz/Pasta)
+- ✅ **Edição:** Botão azul para renomear pasta
+- ✅ **Exclusão:** Botão vermelho para deletar pasta e conteúdo
+- ✅ **Confirmação:** Modal personalizado para confirmar exclusões
+
 ### **Upload de Arquivos**
-- ✅ **Autenticação:** Apenas usuários logados podem fazer upload
-- ✅ **Organização:** Arquivos organizados por usuário no S3
-- ✅ **Estrutura:** `uploads/{email_usuario}/{timestamp}-{nome_arquivo}`
-- ✅ **Múltiplos:** Suporte a upload de múltiplos arquivos
-- ✅ **Interface:** Drag & drop visual com progresso
+- ✅ **Localização:** Dashboard (drag & drop) e Modal Documentos
+- ✅ **Pasta atual:** Upload vai para pasta navegada
+- ✅ **Múltiplos:** Suporte a múltiplos arquivos
+- ✅ **Feedback:** Loading states e mensagens de sucesso
+- ✅ **Atualização:** Lista recarrega automaticamente
 
-### **Armazenamento AWS S3**
-- ✅ **Bucket:** `gerenciador-arquivos-gustavo`
-- ✅ **Região:** `us-east-1`
-- ✅ **Permissões:** Usuário IAM com AmazonS3FullAccess
-- ✅ **URLs:** Geração automática de URLs públicas
-- ✅ **Organização:** Separação por usuário com timestamp
-
-### **Listagem de Arquivos**
-- ✅ **Filtro:** Usuário vê apenas seus próprios arquivos
-- ✅ **Informações:** Nome, URL, data de upload
-- ✅ **Acesso:** Links diretos para visualização/download
+### **Gerenciamento de Arquivos**
+- ✅ **Visualização:** Modal "Documentos" com lista completa
+- ✅ **Busca:** Campo de busca por nome de arquivo
+- ✅ **Ações:** Abrir, Download, Excluir para cada arquivo
+- ✅ **Informações:** Nome, tamanho, data de modificação
+- ✅ **Exclusão:** Modal de confirmação personalizado
 
 ---
 
 ## 🎨 **INTERFACE E EXPERIÊNCIA**
 
-### **Design**
-- ✅ **Tema:** Glassmorphism com gradientes
-- ✅ **Responsivo:** Funciona em desktop e mobile
-- ✅ **Animações:** Transições suaves e efeitos visuais
-- ✅ **Feedback:** Mensagens de sucesso/erro em tempo real
-- ✅ **Toggle:** Alternância entre formulários de login e registro
+### **Dashboard**
+- ✅ **Layout:** Header + conteúdo principal (sem sidebar)
+- ✅ **Header:** Logo, empresa ativa, botão trocar empresa, usuário, logout
+- ✅ **Cards:** Estatísticas (Arquivos, Armazenamento, Documentos)
+- ✅ **Upload:** Área drag & drop integrada
+- ✅ **Arquivos recentes:** Lista dos últimos 5 arquivos
 
-### **Navegação**
-- ✅ **Proteção:** Middleware redireciona não-autenticados para `/`
-- ✅ **Fluxo:** Login → Dashboard → Upload
-- ✅ **Persistência:** Sessão mantida entre recarregamentos
-- ✅ **Logout:** Botão "Sair" remove cookie e redireciona para `/`
+### **Modal de Empresas**
+- ✅ **Busca:** Campo para filtrar por nome ou CNPJ
+- ✅ **Seleção:** Lista de empresas com radio buttons
+- ✅ **Criação:** Formulário para nova empresa
+- ✅ **Validação:** CNPJ único e formato correto
+- ✅ **Obrigatório:** Não pode fechar sem selecionar empresa
+
+### **Modal de Documentos**
+- ✅ **Navegação:** Breadcrumb e navegação por pastas
+- ✅ **Ações:** Upload, Nova Pasta, Busca
+- ✅ **Listagem:** Pastas (amarelo) e arquivos (roxo) separados
+- ✅ **Botões:** Editar/Excluir pastas, Abrir/Download/Excluir arquivos
+- ✅ **Performance:** Limite de 100 itens por consulta S3
 
 ---
 
@@ -76,87 +99,49 @@
 
 ### **Backend (NodeJS)**
 - ✅ **Framework:** Express.js
-- ✅ **Banco:** DynamoDB (tabela: gerenciador-users)
-- ✅ **Storage:** AWS S3
+- ✅ **Usuários:** DynamoDB (tabela: gerenciador-users)
+- ✅ **Empresas:** Arquivo JSON local
+- ✅ **Storage:** AWS S3 com estrutura multi-tenant
 - ✅ **Documentação:** Swagger UI disponível
 - ✅ **Porta:** 3001
-- ✅ **Testes:** Jest + Supertest (13 testes de API)
+
+### **Rotas de API**
+- ✅ **Empresas:** GET/POST /companies, GET /companies/:id/stats
+- ✅ **Pastas:** POST /companies/:id/folders, DELETE /companies/:id/folders/:path
+- ✅ **Arquivos:** GET /companies/:id/files, DELETE /files/:key
+- ✅ **Upload:** POST /upload (com companyId e folder)
 
 ### **Frontend (NuxtJS)**
 - ✅ **Framework:** Nuxt 3 + Vue 3
-- ✅ **Estilo:** TailwindCSS
-- ✅ **HTTP:** $fetch para requisições
+- ✅ **Estilo:** TailwindCSS com glassmorphism
+- ✅ **Componentes:** CompanyModal, DocumentsModal
+- ✅ **Estado:** Cookies para empresa selecionada
 - ✅ **Porta:** 3000
-- ✅ **Testes:** Vitest + Vue Test Utils (41 testes unitários)
-
-### **Testes E2E (Playwright)**
-- ✅ **Framework:** Playwright
-- ✅ **Browsers:** Chromium, Firefox, WebKit, Mobile
-- ✅ **Testes:** 19 testes implementados
-- ✅ **Cobertura:** Login, Registro, Navegação, Toggle
-
-### **AWS Services**
-- ✅ **S3:** Armazenamento de arquivos
-- ✅ **DynamoDB:** Banco de dados de usuários
-- ✅ **IAM:** Controle de permissões
-
----
-
-## 📊 **VALIDAÇÕES E LIMITES**
-
-### **Campos Obrigatórios**
-- ✅ **Registro:** Nome, email (formato válido), senha (6+ caracteres)
-- ✅ **Login:** Email (formato válido), senha (3-6 caracteres)
-- ✅ **Upload:** Arquivo selecionado, usuário autenticado
-
-### **Limites e Validações**
-- ✅ **Email:** Formato obrigatório com regex
-- ✅ **Senha Login:** 3-6 caracteres (frontend)
-- ✅ **Senha Registro:** Mínimo 6 caracteres (backend)
-- ✅ **Token JWT:** 7 dias de validade
-- ✅ **Unicidade:** Email único no sistema
-
-### **Tratamento de Erros**
-- ✅ **Email duplicado:** "Usuário já existe com este email"
-- ✅ **Email inválido:** "Email inválido"
-- ✅ **Login inválido:** "Usuário não encontrado" / "Senha incorreta"
-- ✅ **Campos vazios:** "Campo obrigatório" / "Nome, email e senha são obrigatórios"
-- ✅ **Senha curta:** "Senha deve ter pelo menos 6 caracteres"
-- ✅ **Upload:** Feedback visual de progresso
 
 ---
 
 ## 🔄 **FLUXOS PRINCIPAIS ATUALIZADOS**
 
-### **Fluxo de Registro (ATUALIZADO)**
-1. Usuário acessa `/`
-2. Clica em "Não tem conta? Criar uma agora"
-3. Preenche nome, email (formato válido), senha (6+ caracteres)
-4. Sistema valida formato de email e cria usuário
-5. **NOVO:** Exibe mensagem "Conta criada com sucesso! Faça login para continuar."
-6. **NOVO:** Volta para formulário de login (não faz login automático)
+### **Fluxo Completo de Login**
+1. Usuário acessa `/` e faz login
+2. Redireciona para `/dashboard`
+3. **Modal de empresa abre automaticamente**
+4. Se tem empresas: lista para seleção + busca
+5. Se não tem: formulário para criar primeira empresa
+6. Após seleção: modal fecha e dashboard carrega dados da empresa
 
-### **Fluxo de Login**
-1. Usuário acessa `/`
-2. Preenche email e senha (3-6 caracteres)
-3. Sistema autentica credenciais
-4. Gera token JWT
-5. Redireciona para `/dashboard`
+### **Fluxo de Gerenciamento de Arquivos**
+1. No dashboard: upload drag & drop ou clique no card "Documentos"
+2. Modal Documentos abre mostrando estrutura de pastas
+3. Navegação: clique em pasta para entrar, breadcrumb para voltar
+4. Upload: botão verde seleciona arquivos e envia para pasta atual
+5. Gerenciamento: botões para criar/editar/excluir pastas e arquivos
 
-### **Fluxo de Upload**
-1. Usuário autenticado acessa `/dashboard`
-2. Seleciona arquivos (drag & drop ou clique)
-3. Sistema faz upload para S3 com timestamp
-4. Organiza em `uploads/{email}/{timestamp}-{arquivo}`
-5. Retorna URL pública
-6. Atualiza lista de arquivos
-
-### **Fluxo de Logout (NOVO)**
-1. Usuário no `/dashboard`
-2. Clica no botão "Sair"
-3. Sistema remove cookie de autenticação
-4. Redireciona para `/`
-5. Usuário não consegue mais acessar `/dashboard`
+### **Fluxo de Troca de Empresa**
+1. No dashboard: clique em "Trocar Empresa"
+2. Modal de empresas abre com lista atual
+3. Busca e seleção de nova empresa
+4. Dashboard recarrega com dados da nova empresa selecionada
 
 ---
 
@@ -183,15 +168,15 @@
 ---
 
 ## 🎯 **STATUS ATUAL**
-- ✅ **Sistema:** 100% funcional
-- ✅ **Autenticação:** Completa e segura
-- ✅ **Upload:** Funcionando com AWS S3
-- ✅ **Interface:** Design moderno implementado
-- ✅ **Testes:** 73 testes automatizados (API + Unitários + E2E)
-- ✅ **Validações:** Dupla validação frontend/backend
-- ✅ **Segurança:** Proteção de rotas e JWT
+- ✅ **Sistema:** Multi-tenant funcional
+- ✅ **Empresas:** CRUD completo com validações
+- ✅ **Arquivos:** Upload, download, exclusão por empresa
+- ✅ **Pastas:** Sistema hierárquico completo
+- ✅ **Interface:** Dashboard moderno sem sidebar
+- ✅ **Performance:** Otimizado com limites S3
+- ✅ **Testes:** 73 testes automatizados mantidos
 
 ---
 
-**Última atualização:** 14/01/2025
-**Versão:** 2.0 - Sistema CloudVault com Testes Completos
+**Última atualização:** 22/01/2025
+**Versão:** 3.0 - Sistema Multi-Tenant com Gerenciamento de Pastas

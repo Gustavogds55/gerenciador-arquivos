@@ -1,0 +1,16 @@
+[
+  {
+    "id": "d0fbc541-3a63-474d-9d1a-3e8c2f229dd7",
+    "name": "Ginga code",
+    "cnpj": "12629569265912",
+    "ownerId": "teste@email.com",
+    "createdAt": "2026-01-19T15:17:40.181Z"
+  },
+  {
+    "id": "01a3276d-e789-46f0-90e4-c54de2f5ff71",
+    "name": "Central LGPD",
+    "cnpj": "47641276762174",
+    "ownerId": "teste@email.com",
+    "createdAt": "2026-01-22T22:29:16.064Z"
+  }
+]

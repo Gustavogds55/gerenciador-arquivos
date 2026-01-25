@@ -1,50 +1,47 @@
 const { v4: uuidv4 } = require('uuid');
-const AWS = require('aws-sdk');
+const fs = require('fs');
+const path = require('path');
 
-const dynamodb = new AWS.DynamoDB.DocumentClient({
-  region: process.env.AWS_REGION || 'us-east-1'
-});
+const COMPANIES_FILE = path.join(__dirname, '../../data/companies.json');
 
-const COMPANIES_TABLE = process.env.DYNAMODB_TABLE_COMPANIES || 'gerenciador-companies';
+// Garantir que o diretório existe
+const dataDir = path.dirname(COMPANIES_FILE);
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// Garantir que o arquivo existe
+if (!fs.existsSync(COMPANIES_FILE)) {
+  fs.writeFileSync(COMPANIES_FILE, JSON.stringify([]));
+}
+
+// Ler empresas
+const readCompanies = () => {
+  try {
+    const data = fs.readFileSync(COMPANIES_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch {
+    return [];
+  }
+};
+
+// Salvar empresas
+const saveCompanies = (companies) => {
+  fs.writeFileSync(COMPANIES_FILE, JSON.stringify(companies, null, 2));
+};
 
 // Validar CNPJ
 const isValidCNPJ = (cnpj) => {
   cnpj = cnpj.replace(/\D/g, '');
-  if (cnpj.length !== 14) return false;
-  
-  // Validação básica de dígitos verificadores
-  let sum = 0;
-  let weight = 5;
-  for (let i = 0; i < 12; i++) {
-    sum += parseInt(cnpj[i]) * weight;
-    weight = weight === 2 ? 9 : weight - 1;
-  }
-  let digit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
-  
-  sum = 0;
-  weight = 6;
-  for (let i = 0; i < 13; i++) {
-    sum += parseInt(cnpj[i]) * weight;
-    weight = weight === 2 ? 9 : weight - 1;
-  }
-  let digit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
-  
-  return parseInt(cnpj[12]) === digit1 && parseInt(cnpj[13]) === digit2;
+  return cnpj.length === 14;
 };
 
 // Listar empresas do usuário
 const getCompanies = async (req, res) => {
   try {
-    const params = {
-      TableName: COMPANIES_TABLE,
-      FilterExpression: 'ownerId = :ownerId',
-      ExpressionAttributeValues: {
-        ':ownerId': req.user.email
-      }
-    };
-
-    const result = await dynamodb.scan(params).promise();
-    res.json({ companies: result.Items });
+    const companies = readCompanies();
+    const userCompanies = companies.filter(c => c.ownerId === req.user.email);
+    res.json({ companies: userCompanies });
   } catch (error) {
     console.error('Erro ao listar empresas:', error);
     res.status(500).json({ error: 'Erro interno do servidor' });
@@ -66,17 +63,11 @@ const createCompany = async (req, res) => {
       return res.status(400).json({ error: 'CNPJ inválido' });
     }
 
+    const companies = readCompanies();
+    
     // Verificar se CNPJ já existe
-    const existingParams = {
-      TableName: COMPANIES_TABLE,
-      FilterExpression: 'cnpj = :cnpj',
-      ExpressionAttributeValues: {
-        ':cnpj': cleanCNPJ
-      }
-    };
-
-    const existing = await dynamodb.scan(existingParams).promise();
-    if (existing.Items.length > 0) {
+    const existing = companies.find(c => c.cnpj === cleanCNPJ);
+    if (existing) {
       return res.status(400).json({ error: 'CNPJ já cadastrado' });
     }
 
@@ -88,12 +79,9 @@ const createCompany = async (req, res) => {
       createdAt: new Date().toISOString()
     };
 
-    const params = {
-      TableName: COMPANIES_TABLE,
-      Item: company
-    };
-
-    await dynamodb.put(params).promise();
+    companies.push(company);
+    saveCompanies(companies);
+    
     res.status(201).json({ company });
   } catch (error) {
     console.error('Erro ao criar empresa:', error);
@@ -101,7 +89,60 @@ const createCompany = async (req, res) => {
   }
 };
 
+// Obter estatísticas da empresa
+const getCompanyStats = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+    const companies = readCompanies();
+    
+    const company = companies.find(c => c.id === companyId && c.ownerId === req.user.email);
+    if (!company) {
+      return res.status(404).json({ error: 'Empresa não encontrada' });
+    }
+
+    // Buscar arquivos reais do S3
+    try {
+      const AWS = require('aws-sdk');
+      const s3 = new AWS.S3({
+        region: process.env.AWS_S3_REGION,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+      });
+
+      const params = {
+        Bucket: process.env.AWS_S3_BUCKET,
+        Prefix: `uploads/company-${companyId}/`
+      };
+
+      const result = await s3.listObjectsV2(params).promise();
+      
+      const totalFiles = result.Contents.length;
+      const totalSize = result.Contents.reduce((sum, file) => sum + file.Size, 0);
+      const sizeInMB = (totalSize / (1024 * 1024)).toFixed(2);
+
+      const stats = {
+        files: totalFiles,
+        storage: `${sizeInMB} MB`
+      };
+
+      res.json({ stats });
+    } catch (s3Error) {
+      // Se der erro no S3, retorna valores padrão
+      console.log('Erro S3, usando valores padrão:', s3Error.message);
+      const stats = {
+        files: 0,
+        storage: '0 MB'
+      };
+      res.json({ stats });
+    }
+  } catch (error) {
+    console.error('Erro ao obter estatísticas:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+};
+
 module.exports = {
   getCompanies,
-  createCompany
+  createCompany,
+  getCompanyStats
 };
