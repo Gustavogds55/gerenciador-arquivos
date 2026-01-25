@@ -1,6 +1,6 @@
 <template>
   <div v-if="show" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-    <div class="backdrop-blur-lg bg-white/10 rounded-3xl border border-white/20 p-8 max-w-md w-full mx-4">
+    <div data-testid="company-modal" class="backdrop-blur-lg bg-white/10 rounded-3xl border border-white/20 p-8 max-w-md w-full mx-4">
       <h2 class="text-2xl font-bold text-white mb-6 text-center">
         {{ companies.length > 0 ? 'Selecionar Empresa' : 'Nova Empresa' }}
       </h2>
@@ -55,6 +55,11 @@
           maxlength="18"
           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-purple-300 focus:outline-none focus:border-purple-400"
         />
+        
+        <!-- Mensagem de erro para campos obrigatórios -->
+        <div v-if="showValidationError" class="text-red-300 text-sm">
+          Nome da empresa e CNPJ são obrigatórios
+        </div>
       </div>
 
       <!-- Botões -->
@@ -78,8 +83,7 @@
         <button
           v-if="companies.length === 0 || showCreateForm"
           @click="createCompany"
-          :disabled="!newCompany.name || !newCompany.cnpj || loading"
-          class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-3 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50"
+          class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-3 rounded-xl font-semibold transition-all duration-300"
         >
           {{ loading ? 'Criando...' : 'Criar' }}
         </button>
@@ -117,6 +121,7 @@ const searchTerm = ref('')
 const showCreateForm = ref(false)
 const loading = ref(false)
 const error = ref('')
+const showValidationError = ref(false)
 
 const newCompany = ref({
   name: '',
@@ -160,6 +165,13 @@ const loadCompanies = async () => {
 }
 
 const createCompany = async () => {
+  // Validar campos obrigatórios
+  if (!newCompany.value.name.trim() || !newCompany.value.cnpj.trim()) {
+    showValidationError.value = true
+    return
+  }
+  
+  showValidationError.value = false
   loading.value = true
   error.value = ''
   
