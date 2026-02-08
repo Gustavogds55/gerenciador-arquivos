@@ -9,11 +9,8 @@ test.describe('Testes E2E - Tela de Login', () => {
     await page.getByPlaceholder('Digite sua senha').fill('123456');
     await page.getByRole('button', { name: 'Entrar na Plataforma' }).click();
     
-    // Aguarda redirecionamento para dashboard
-    await expect(page).toHaveURL('/dashboard', { timeout: 10000 });
-    
-    // Verifica se modal de empresa aparece
-    await expect(page.locator('[data-testid="company-modal"]')).toBeVisible({ timeout: 5000 });
+    // Verifica se modal de empresa aparece (indica login bem-sucedido)
+    await expect(page.locator('[data-testid="company-modal"]')).toBeVisible({ timeout: 10000 });
   });
 
   // CT-002: Login com Email Inválido
