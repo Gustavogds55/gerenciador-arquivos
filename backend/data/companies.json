@@ -12,5 +12,19 @@
     "cnpj": "47641276762174",
     "ownerId": "teste@email.com",
     "createdAt": "2026-01-22T22:29:16.064Z"
+  },
+  {
+    "id": "94ff4931-3f3d-480d-8d6d-bc66cc8460a5",
+    "name": "Empresa Teste",
+    "cnpj": "11222333000100",
+    "ownerId": "cnpjinvalido1769347301373@email.com",
+    "createdAt": "2026-01-25T13:21:48.655Z"
+  },
+  {
+    "id": "3a46aab6-cf2d-4376-a8c6-1f2cf212dbb7",
+    "name": "Empresa Válida",
+    "cnpj": "11222333000181",
+    "ownerId": "cnpjvalido1769352962085@email.com",
+    "createdAt": "2026-01-25T14:56:08.691Z"
   }
 ]

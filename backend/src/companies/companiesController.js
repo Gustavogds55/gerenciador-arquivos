@@ -33,7 +33,33 @@ const saveCompanies = (companies) => {
 // Validar CNPJ
 const isValidCNPJ = (cnpj) => {
   cnpj = cnpj.replace(/\D/g, '');
-  return cnpj.length === 14;
+  
+  if (cnpj.length !== 14) return false;
+  
+  // Elimina CNPJs inválidos conhecidos
+  if (/^(\d)\1{13}$/.test(cnpj)) return false;
+  
+  // Calcula primeiro dígito verificador
+  let soma = 0;
+  let peso = 2;
+  for (let i = 11; i >= 0; i--) {
+    soma += parseInt(cnpj.charAt(i)) * peso;
+    peso = peso === 9 ? 2 : peso + 1;
+  }
+  let digito1 = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+  
+  if (parseInt(cnpj.charAt(12)) !== digito1) return false;
+  
+  // Calcula segundo dígito verificador
+  soma = 0;
+  peso = 2;
+  for (let i = 12; i >= 0; i--) {
+    soma += parseInt(cnpj.charAt(i)) * peso;
+    peso = peso === 9 ? 2 : peso + 1;
+  }
+  let digito2 = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+  
+  return parseInt(cnpj.charAt(13)) === digito2;
 };
 
 // Listar empresas do usuário

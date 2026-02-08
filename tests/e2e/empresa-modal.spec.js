@@ -88,4 +88,79 @@ test.describe('Modal de Seleção de Empresa', () => {
     await expect(page.locator('text=Nome da empresa e CNPJ são obrigatórios')).toBeVisible();
   });
 
+  test('4. Validação CNPJ inválido', async ({ page }) => {
+    await page.goto('http://localhost:3000');
+    
+    const uniqueEmail = `cnpjinvalido${Date.now()}@email.com`;
+    
+    await page.click('text=Não tem conta? Criar uma agora');
+    await page.fill('input[placeholder="Seu nome completo"]', 'Usuario CNPJ Inválido');
+    await page.fill('input[placeholder="Seu melhor email"]', uniqueEmail);
+    await page.fill('input[placeholder="Crie uma senha segura"]', '123456');
+    await page.click('button:has-text("Criar Minha Conta")');
+    
+    await expect(page.locator('text=Conta criada com sucesso')).toBeVisible();
+    await page.fill('input[placeholder="Digite seu email"]', uniqueEmail);
+    await page.fill('input[placeholder="Digite sua senha"]', '123456');
+    await page.click('button:has-text("Entrar na Plataforma")');
+    
+    await page.waitForURL('**/dashboard');
+    await expect(page.locator('[data-testid="company-modal"]')).toBeVisible();
+    
+    await page.fill('input[placeholder="Nome da empresa"]', 'Empresa Teste');
+    await page.fill('input[placeholder="CNPJ"]', '11.222.333/0001-00');
+    await page.click('button:has-text("Criar")');
+    
+    // Aguardar resposta e verificar se modal permanece aberto
+    await page.waitForTimeout(1000);
+    await expect(page.locator('[data-testid="company-modal"]')).toBeVisible();
+  });
+
+  test('5. Validação CNPJ válido - criação bem-sucedida', async ({ page }) => {
+    await page.goto('http://localhost:3000');
+    
+    const uniqueEmail = `cnpjvalido${Date.now()}@email.com`;
+    
+    await page.click('text=Não tem conta? Criar uma agora');
+    await page.fill('input[placeholder="Seu nome completo"]', 'Usuario CNPJ Válido');
+    await page.fill('input[placeholder="Seu melhor email"]', uniqueEmail);
+    await page.fill('input[placeholder="Crie uma senha segura"]', '123456');
+    await page.click('button:has-text("Criar Minha Conta")');
+    
+    await expect(page.locator('text=Conta criada com sucesso')).toBeVisible();
+    await page.fill('input[placeholder="Digite seu email"]', uniqueEmail);
+    await page.fill('input[placeholder="Digite sua senha"]', '123456');
+    await page.click('button:has-text("Entrar na Plataforma")');
+    
+    await page.waitForURL('**/dashboard');
+    await expect(page.locator('[data-testid="company-modal"]')).toBeVisible();
+    
+    await page.fill('input[placeholder="Nome da empresa"]', 'Empresa Válida');
+    await page.fill('input[placeholder="CNPJ"]', '11.222.333/0001-81');
+    await page.click('button:has-text("Criar")');
+    
+    await expect(page.locator('[data-testid="company-modal"]')).not.toBeVisible();
+  });
+
+  test('6. Lista de empresas para usuário com empresas', async ({ page }) => {
+    await page.goto('http://localhost:3000');
+    
+    // Fazer login com usuário que já tem empresa (do teste anterior)
+    await page.fill('input[type="email"]', 'teste@email.com');
+    await page.fill('input[type="password"]', '123456');
+    await page.click('button[type="submit"]');
+    
+    await page.waitForURL('**/dashboard');
+    await expect(page.locator('[data-testid="company-modal"]')).toBeVisible();
+    
+    // Verificar título para seleção
+    await expect(page.locator('text=Selecionar Empresa')).toBeVisible();
+    
+    // Verificar se campo de busca está presente
+    await expect(page.locator('input[placeholder="Buscar nome ou CNPJ..."]')).toBeVisible();
+    
+    // Verificar se botão "Nova Empresa" está presente
+    await expect(page.locator('button:has-text("Nova Empresa")')).toBeVisible();
+  });
+
 });
