@@ -1,0 +1,71 @@
+name: Login Tests Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  test-login:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Instalar dependências Backend
+        working-directory: ./backend
+        run: npm install
+
+      - name: Instalar Playwright
+        run: |
+          npm install -D @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Criar arquivo de dados
+        run: |
+          mkdir -p backend/data
+          echo '[]' > backend/data/users.json
+          echo '[]' > backend/data/companies.json
+
+      - name: Iniciar Backend
+        working-directory: ./backend
+        run: |
+          PORT=3001 JWT_SECRET=test-secret npm start &
+          sleep 5
+
+      - name: Instalar dependências Frontend
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Iniciar Frontend
+        working-directory: ./frontend
+        run: |
+          npm run dev &
+          sleep 10
+
+      - name: Executar Testes de Login
+        run: npx playwright test tests/e2e/login.spec.js --reporter=html
+
+      - name: Upload Relatório de Testes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-login
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload Screenshots de Falhas
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-failures-login
+          path: test-results/
+          retention-days: 7
