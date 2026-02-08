@@ -32,7 +32,7 @@ jobs:
       - name: Criar arquivo de dados
         run: |
           mkdir -p backend/data
-          echo '[]' > backend/data/users.json
+          echo '[{"email":"teste@email.com","password":"$2b$10$AXjd/5iz5SO50TNb.hGjwe4hPD3A0vkVGRG0UIwd7hX.gKFsWIU8S","name":"Usuario Teste"}]' > backend/data/users.json
           echo '[]' > backend/data/companies.json
 
       - name: Iniciar Backend
