@@ -38,8 +38,14 @@ jobs:
       - name: Iniciar Backend
         working-directory: ./backend
         run: |
-          PORT=3001 JWT_SECRET=test-secret npm start &
+          PORT=3001 JWT_SECRET=test-secret npm start > backend.log 2>&1 &
           sleep 5
+          echo "Backend iniciado, verificando logs:"
+          cat backend.log
+
+      - name: Verificar Backend
+        run: |
+          curl -f http://localhost:3001/health || echo "Backend não está respondendo"
 
       - name: Instalar dependências Frontend
         working-directory: ./frontend
@@ -48,10 +54,16 @@ jobs:
       - name: Iniciar Frontend
         working-directory: ./frontend
         run: |
-          npm run dev &
+          npm run dev > frontend.log 2>&1 &
           sleep 10
+          echo "Frontend iniciado, verificando logs:"
+          tail -20 frontend.log
         env:
           NUXT_PUBLIC_API_BASE: http://localhost:3001
+
+      - name: Verificar Frontend
+        run: |
+          curl -f http://localhost:3000 || echo "Frontend não está respondendo"
 
       - name: Executar Testes de Login
         run: npx playwright test tests/e2e/login.spec.js --project=chromium --reporter=html --workers=4
