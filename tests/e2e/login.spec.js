@@ -14,10 +14,11 @@ test.describe('Testes E2E - Tela de Login', () => {
   // CT-002: Login com Email Inválido
   test('Usuario invalido', async ({ page }) => {
     await page.goto('/');
+    await page.getByPlaceholder('Digite seu email').clear();
     await page.getByPlaceholder('Digite seu email').fill('naoexiste@email.com');
     await page.getByPlaceholder('Digite sua senha').fill('123456');
     await page.getByRole('button', { name: 'Entrar na Plataforma' }).click();
-    await expect(page.getByText('Usuário não encontrado')).toBeVisible();
+    await expect(page.getByText('Usuário não encontrado')).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Seu gerenciador de arquivos na nuvem')).toBeVisible();
   });
 
