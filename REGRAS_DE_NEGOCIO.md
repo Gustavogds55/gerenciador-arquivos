@@ -145,25 +145,14 @@
 
 ---
 
-## 🧪 **COBERTURA DE TESTES**
+## 🧪 **TESTES**
 
-### **Testes de API (Backend)**
-- ✅ **13 testes** com Jest + Supertest
-- ✅ Registro, Login, Perfil protegido
-- ✅ Validações de erro e sucesso
-
-### **Testes Unitários (Frontend)**
-- ✅ **41 testes** com Vitest + Vue Test Utils
-- ✅ Validações de email e senha
-- ✅ Middleware de autenticação
-- ✅ Utilitários e helpers
-
-### **Testes E2E (Playwright)**
-- ✅ **19 testes** implementados
-- ✅ **Login:** 8 testes (sucesso, validações, loading)
-- ✅ **Registro:** 7 testes (sucesso, validações, campos obrigatórios)
-- ✅ **Navegação:** 3 testes (proteção, logout, persistência)
-- ✅ **Toggle:** 1 teste (alternância de formulários)
+### **Testes E2E (Playwright .NET/C#)**
+- ✅ **Framework:** Playwright com .NET 10.0
+- ✅ **Test Runner:** NUnit
+- ✅ **Estrutura:** PlaywrightTests/ com gerenciador-arquivos.sln
+- ✅ **Status:** Configurado e pronto para implementação
+- 📝 **Planejado:** Login, Registro, Multi-tenant, Arquivos, Pastas
 
 ---
 
@@ -174,9 +163,9 @@
 - ✅ **Pastas:** Sistema hierárquico completo
 - ✅ **Interface:** Dashboard moderno sem sidebar
 - ✅ **Performance:** Otimizado com limites S3
-- ✅ **Testes:** 73 testes automatizados mantidos
+- ✅ **Testes:** Playwright .NET/C# configurado
 
 ---
 
 **Última atualização:** 22/01/2025
-**Versão:** 3.0 - Sistema Multi-Tenant com Gerenciamento de Pastas
+**Versão:** 4.0 - Migração para Playwright .NET/C#

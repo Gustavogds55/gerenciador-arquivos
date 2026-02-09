@@ -142,3 +142,11 @@ vite.config.ts.timestamp-*
 test-results/
 playwright-report/
 playwright/.cache/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+.vs/
